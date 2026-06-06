@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SMC Trading Journal Pro</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef3f7;
+      font-size: 12px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 15px;
+      padding: 15px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-add {
+      background: #20c997;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .btn-settings {
+      background: #343a40;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .btn-delete {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .btn-small {
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th {
+      background: #b7d7f0;
+      border: 1px solid #333;
+      padding: 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      padding: 5px;
+      border-radius: 6px;
+      background: #edf1f5;
+      font-size: 10px;
+    }
+
+    .setup-select {
+      min-width: 230px;
+      font-size: 9px;
+    }
+
+    .note-input {
+      min-width: 130px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #aaa;
+      margin-bottom: 12px;
+    }
+
+    .stat-box {
+      background: white;
+      border: 1px solid #aaa;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-around;
+      font-weight: bold;
+    }
+
+    .win { color: green; }
+    .loss { color: red; }
+    .be { color: orange; }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #aaa;
+      padding: 10px;
+      border-radius: 6px;
+      min-height: 220px;
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 40px auto;
+      padding: 20px;
+      width: 80%;
+      max-width: 900px;
+      border-radius: 12px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .setting-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 12px;
+      background: #f8f9fa;
+    }
+
+    .option-row {
+      display: flex;
+      gap: 8px;
+      margin: 5px 0;
+      align-items: center;
+    }
+
+    .option-row span {
+      flex: 1;
+      background: white;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div>
+    <h1>📘 SMC Trading Journal Pro</h1>
+    <button class="btn-add" onclick="addTrade()">+ Add Trade</button>
+    <button class="btn-settings" onclick="openSettings()">⚙️ Manage Options</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Asset</th>
+          <th>Day</th>
+          <th>Order</th>
+          <th>HTF</th>
+          <th>Session</th>
+          <th>Setup Model</th>
+          <th>POI</th>
+          <th>IDM</th>
+          <th>Entry TF</th>
+          <th>Fibo Max</th>
+          <th>Fibo Entry</th>
+          <th>Result</th>
+          <th>RR</th>
+          <th>Note</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="tradeBody"></tbody>
+    </table>
+  </div>
+
+  <div>
+    <div class="filters">
+      <select id="filterAsset" onchange="render()"></select>
+      <select id="filterOrder" onchange="render()"></select>
+      <select id="filterResult" onchange="render()"></select>
+      <select id="filterSession" onchange="render()"></select>
+    </div>
+
+    <div class="stat-box">
+      <div>Total: <span id="totalTrades">0</span></div>
+      <div class="win">Winrate: <span id="winrate">0%</span></div>
+      <div>Avg RR: <span id="avgRR">0</span></div>
+    </div>
+
+    <div class="dashboard">
+      <div class="card">
+        <h3>HTF OB HOF/LOF</h3>
+        <canvas id="htfChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Setup Model</h3>
+        <canvas id="setupChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>POI</h3>
+        <canvas id="poiChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>IDM</h3>
+        <canvas id="idmChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Fibo</h3>
+        <canvas id="fiboChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Session</h3>
+        <canvas id="sessionChart"></canvas>
+      </div>
+
+      <div class="card wide">
+        <h3>Session & Day</h3>
+        <canvas id="dayChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h2>⚙️ Manage Dropdown Options</h2>
+    <p>เพิ่มตัวเลือกเองได้ เช่น Setup Model ใหม่, POI ใหม่, HTF ใหม่ โดยไม่ต้องแก้โค้ด</p>
+
+    <div class="settings-grid" id="settingsGrid"></div>
+
+    <br>
+    <button class="btn-settings" onclick="closeSettings()">Close</button>
+    <button class="btn-delete" onclick="resetOptions()">Reset Options</button>
+  </div>
+</div>
+
+<script>
+  const defaultOptions = {
+    asset: ["XAUUSD", "EURUSD", "US30", "BTCUSD", "NAS100"],
+    day: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    order: ["Buy Limit", "Sell Limit", "Market Buy", "Market Sell"],
+    htf: ["Drop no-LOF", "Rally no-HOF", "Drop HOF", "Rally LOF"],
+    session: ["Asian", "London Open", "New York", "London Close"],
+
+    setup: [
+      "M2 + MSS + CHoCH + BOS + Supply + FVG",
+      "M2 + MSS + CHoCH + BOS + Hidden Supply",
+      "M3 + MSS + CHoCH + BOS + Supply + FVG",
+      "M3 + MSS + CHoCH + BOS + Hidden Supply",
+      "W2 + MSS + CHoCH + BOS + Demand + FVG",
+      "W2 + MSS + CHoCH + BOS + Hidden Demand",
+      "W3 + MSS + CHoCH + BOS + Demand + FVG",
+      "W3 + MSS + CHoCH + BOS + Hidden Demand",
+      "Liquidity Sweep + MSS + FVG",
+      "Liquidity Sweep + CHoCH + FVG",
+      "OB + IDM + MSS",
+      "OB + IDM + BOS",
+      "Supply Retest",
+      "Demand Retest",
+      "London Manipulation",
+      "New York Manipulation",
+      "AMD Accumulation",
+      "AMD Manipulation",
+      "AMD Distribution"
+    ],
+
+    poi: [
+      "OB + FVG",
+      "OB + Hidden",
+      "Supply",
+      "Demand",
+      "Hidden Supply",
+      "Hidden Demand",
+      "FVG",
+      "OB"
+    ],
+
+    idm: ["Yes", "No"],
+    entry: ["1m", "3m", "5m", "15m"],
+    fibo: ["3.222", "5", "6.918", "0.705"],
+    result: ["Win", "Loss", "BE"]
+  };
+
+  let options = JSON.parse(localStorage.getItem("journal_options")) || defaultOptions;
+  let trades = JSON.parse(localStorage.getItem("smc_trading_journal")) || [];
+  let charts = {};
+
+  function saveOptions() {
+    localStorage.setItem("journal_options", JSON.stringify(options));
+  }
+
+  function saveTrades() {
+    localStorage.setItem("smc_trading_journal", JSON.stringify(trades));
+  }
+
+  function addTrade() {
+    trades.push({
+      asset: options.asset[0],
+      day: options.day[0],
+      order: options.order[0],
+      htf: options.htf[0],
+      session: options.session[0],
+      setup: options.setup[0],
+      poi: options.poi[0],
+      idm: options.idm[0],
+      entry: options.entry[0],
+      fiboMax: options.fibo[0],
+      fiboEntry: options.fibo[0],
+      result: options.result[0],
+      rr: 2,
+      note: ""
+    });
+
+    saveTrades();
+    render();
+  }
+
+  function deleteTrade(index) {
+    trades.splice(index, 1);
+    saveTrades();
+    render();
+  }
+
+  function updateTrade(index, key, value) {
+    trades[index][key] = value;
+    saveTrades();
+    renderDashboard();
+  }
+
+  function makeSelect(value, list, index, key, extraClass = "") {
+    return `
+      <select class="${extraClass}" onchange="updateTrade(${index}, '${key}', this.value)">
+        ${list.map(item => `
+          <option value="${item}" ${item === value ? "selected" : ""}>${item}</option>
+        `).join("")}
+      </select>
+    `;
+  }
+
+  function renderTable() {
+    const body = document.getElementById("tradeBody");
+    body.innerHTML = "";
+
+    trades.forEach((t, i) => {
+      body.innerHTML += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${makeSelect(t.asset, options.asset, i, "asset")}</td>
+          <td>${makeSelect(t.day, options.day, i, "day")}</td>
+          <td>${makeSelect(t.order, options.order, i, "order")}</td>
+          <td>${makeSelect(t.htf, options.htf, i, "htf")}</td>
+          <td>${makeSelect(t.session, options.session, i, "session")}</td>
+          <td>${makeSelect(t.setup, options.setup, i, "setup", "setup-select")}</td>
+          <td>${makeSelect(t.poi, options.poi, i, "poi")}</td>
+          <td>${makeSelect(t.idm, options.idm, i, "idm")}</td>
+          <td>${makeSelect(t.entry, options.entry, i, "entry")}</td>
+          <td>${makeSelect(t.fiboMax, options.fibo, i, "fiboMax")}</td>
+          <td>${makeSelect(t.fiboEntry, options.fibo, i, "fiboEntry")}</td>
+          <td>${makeSelect(t.result, options.result, i, "result")}</td>
+          <td>
+            <input type="number" value="${t.rr}" step="0.1"
+            onchange="updateTrade(${i}, 'rr', this.value)">
+          </td>
+          <td>
+            <input class="note-input" value="${t.note}" onchange="updateTrade(${i}, 'note', this.value)">
+          </td>
+          <td>
+            <button class="btn-delete" onclick="deleteTrade(${i})">X</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function renderFilters() {
+    makeFilter("filterAsset", "Asset All", options.asset);
+    makeFilter("filterOrder", "Order All", options.order);
+    makeFilter("filterResult", "Result All", options.result);
+    makeFilter("filterSession", "Session All", options.session);
+  }
+
+  function makeFilter(id, label, list) {
+    const el = document.getElementById(id);
+    const current = el.value || "All";
+
+    el.innerHTML = `<option value="All">${label}</option>`;
+
+    list.forEach(item => {
+      el.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+
+    el.value = current;
+  }
+
+  function getFilteredTrades() {
+    const asset = document.getElementById("filterAsset").value;
+    const order = document.getElementById("filterOrder").value;
+    const result = document.getElementById("filterResult").value;
+    const session = document.getElementById("filterSession").value;
+
+    return trades.filter(t =>
+      (asset === "All" || t.asset === asset) &&
+      (order === "All" || t.order === order) &&
+      (result === "All" || t.result === result) &&
+      (session === "All" || t.session === session)
+    );
+  }
+
+  function countBy(data, key) {
+    const count = {};
+
+    data.forEach(t => {
+      count[t[key]] = (count[t[key]] || 0) + 1;
+    });
+
+    return count;
+  }
+
+  function createChart(id, type, labels, data) {
+    if (charts[id]) {
+      charts[id].destroy();
+    }
+
+    charts[id] = new Chart(document.getElementById(id), {
+      type: type,
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "right",
+            labels: {
+              font: { size: 10 }
+            }
+          }
+        },
+        scales: type === "bar" ? {
+          y: { beginAtZero: true }
+        } : {}
+      }
+    });
+  }
+
+  function drawByKey(chartId, type, data, key) {
+    const count = countBy(data, key);
+    createChart(chartId, type, Object.keys(count), Object.values(count));
+  }
+
+  function renderDashboard() {
+    const data = getFilteredTrades();
+
+    const total = data.length;
+    const wins = data.filter(t => t.result === "Win").length;
+
+    const winrate = total ? ((wins / total) * 100).toFixed(2) : 0;
+
+    const avgRR = total
+      ? (data.reduce((sum, t) => sum + Number(t.rr || 0), 0) / total).toFixed(2)
+      : 0;
+
+    document.getElementById("totalTrades").innerText = total;
+    document.getElementById("winrate").innerText = winrate + "%";
+    document.getElementById("avgRR").innerText = avgRR;
+
+    drawByKey("htfChart", "doughnut", data, "htf");
+    drawByKey("setupChart", "doughnut", data, "setup");
+    drawByKey("poiChart", "doughnut", data, "poi");
+    drawByKey("idmChart", "bar", data, "idm");
+    drawByKey("fiboChart", "doughnut", data, "fiboMax");
+    drawByKey("sessionChart", "doughnut", data, "session");
+    drawByKey("dayChart", "bar", data, "day");
+  }
+
+  function openSettings() {
+    document.getElementById("settingsModal").style.display = "block";
+    renderSettings();
+  }
+
+  function closeSettings() {
+    document.getElementById("settingsModal").style.display = "none";
+    render();
+  }
+
+  function renderSettings() {
+    const grid = document.getElementById("settingsGrid");
+    grid.innerHTML = "";
+
+    const labels = {
+      asset: "Asset",
+      day: "Day",
+      order: "Order Type",
+      htf: "HTF",
+      session: "Session",
+      setup: "Setup Model",
+      poi: "POI",
+      idm: "IDM",
+      entry: "Entry TF",
+      fibo: "Fibo",
+      result: "Result"
+    };
+
+    Object.keys(options).forEach(key => {
+      grid.innerHTML += `
+        <div class="setting-card">
+          <h3>${labels[key]}</h3>
+
+          <div class="option-row">
+            <input id="new_${key}" placeholder="เพิ่มตัวเลือกใหม่">
+            <button class="btn-add btn-small" onclick="addOption('${key}')">Add</button>
+          </div>
+
+          <div id="list_${key}">
+            ${options[key].map((item, index) => `
+              <div class="option-row">
+                <span>${item}</span>
+                <button class="btn-delete btn-small" onclick="deleteOption('${key}', ${index})">ลบ</button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function addOption(key) {
+    const input = document.getElementById("new_" + key);
+    const value = input.value.trim();
+
+    if (!value) return;
+
+    if (!options[key].includes(value)) {
+      options[key].push(value);
+      saveOptions();
+      renderSettings();
+      render();
+    }
+
+    input.value = "";
+  }
+
+  function deleteOption(key, index) {
+    if (options[key].length <= 1) {
+      alert("ต้องเหลืออย่างน้อย 1 ตัวเลือก");
+      return;
+    }
+
+    options[key].splice(index, 1);
+    saveOptions();
+    renderSettings();
+    render();
+  }
+
+  function resetOptions() {
+    if (confirm("ต้องการ Reset ตัวเลือกทั้งหมดกลับค่าเริ่มต้นใช่ไหม?")) {
+      options = JSON.parse(JSON.stringify(defaultOptions));
+      saveOptions();
+      renderSettings();
+      render();
+    }
+  }
+
+  function render() {
+    renderFilters();
+    renderTable();
+    renderDashboard();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
