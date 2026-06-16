@@ -2,642 +2,498 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SMC Trading Journal Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMC Trading Journal Pro V1.2.2</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #eef3f7;
-      font-size: 12px;
-    }
-
-    .app {
-      display: grid;
-      grid-template-columns: 1.45fr 1fr;
-      gap: 15px;
-      padding: 15px;
-    }
-
-    h1 {
-      margin: 0 0 10px;
-    }
-
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-add {
-      background: #20c997;
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .btn-settings {
-      background: #343a40;
-      color: white;
-      margin-bottom: 10px;
-    }
-
-    .btn-delete {
-      background: #ff6b6b;
-      color: white;
-    }
-
-    .btn-small {
-      padding: 5px 8px;
-      font-size: 11px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    th {
-      background: #b7d7f0;
-      border: 1px solid #333;
-      padding: 6px;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    td {
-      border: 1px solid #ccc;
-      padding: 4px;
-      text-align: center;
-    }
-
-    input, select {
-      width: 100%;
-      box-sizing: border-box;
-      border: none;
-      padding: 5px;
-      border-radius: 6px;
-      background: #edf1f5;
-      font-size: 10px;
-    }
-
-    .setup-select {
-      min-width: 230px;
-      font-size: 9px;
-    }
-
-    .note-input {
-      min-width: 130px;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      background: white;
-      padding: 10px;
-      border: 1px solid #aaa;
-      margin-bottom: 12px;
-    }
-
-    .stat-box {
-      background: white;
-      border: 1px solid #aaa;
-      padding: 10px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-around;
-      font-weight: bold;
-    }
-
-    .win { color: green; }
-    .loss { color: red; }
-    .be { color: orange; }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #aaa;
-      padding: 10px;
-      border-radius: 6px;
-      min-height: 220px;
-    }
-
-    .wide {
-      grid-column: span 2;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 99;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-    }
-
-    .modal-content {
-      background: white;
-      margin: 40px auto;
-      padding: 20px;
-      width: 80%;
-      max-width: 900px;
-      border-radius: 12px;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .settings-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .setting-card {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 12px;
-      background: #f8f9fa;
-    }
-
-    .option-row {
-      display: flex;
-      gap: 8px;
-      margin: 5px 0;
-      align-items: center;
-    }
-
-    .option-row span {
-      flex: 1;
-      background: white;
-      padding: 6px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      font-size: 11px;
-    }
-
-    @media (max-width: 1200px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
-
-      .settings-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#eef3f7;font-size:12px;color:#111}
+    .app{display:grid;grid-template-columns:1.35fr 1fr;gap:15px;padding:15px} h1{margin:0 0 10px}.topbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    button{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold}.btn-add{background:#20c997;color:white}.btn-dark{background:#343a40;color:white}.btn-del{background:#ff6b6b;color:white}.btn-blue{background:#339af0;color:white}.btn-purple{background:#845ef7;color:white}.btn-small{padding:5px 8px;font-size:11px}.btn-disabled{opacity:.45;cursor:not-allowed}
+    .home{background:white;border:1px solid #aaa;border-radius:8px;padding:12px;margin-bottom:12px}.summary-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.metric{background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center}.metric b{display:block;font-size:18px;margin-top:4px}details{background:#fff;border:1px solid #ccc;border-radius:8px;margin:8px 0;padding:8px}summary{cursor:pointer;font-weight:bold}
+    table{width:100%;border-collapse:collapse;background:white}th{background:#b7d7f0;border:1px solid #333;padding:6px;text-align:center;white-space:nowrap}td{border:1px solid #ccc;padding:4px;text-align:center}input,select,textarea{width:100%;border:none;padding:5px;border-radius:6px;background:#edf1f5;font-size:10px}textarea{min-width:130px;height:30px}.setup-select{min-width:230px;font-size:9px}.note-input{min-width:190px}.rr-input{min-width:78px;font-size:14px;font-weight:bold;text-align:center;border:1px solid #aaa}.rr-win{background:#d3f9d8!important;color:#087f23!important;border:1px solid #37b24d!important}.rr-loss{background:#ffe3e3!important;color:#c92a2a!important;border:1px solid #fa5252!important}.rr-be{background:#e9ecef!important;color:#495057!important;border:1px solid #adb5bd!important}
+    .filters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:white;padding:10px;border:1px solid #aaa;margin-bottom:12px}.stat-box{background:white;border:1px solid #aaa;padding:10px;margin-bottom:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;font-weight:bold}.win{color:green}.loss{color:red}.be{color:orange}.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:white;border:1px solid #aaa;padding:10px;border-radius:6px;min-height:220px}.wide{grid-column:span 2}
+    .img-thumb{width:55px;height:38px;object-fit:cover;border-radius:4px;border:1px solid #ccc;cursor:pointer}.link-preview{display:block;margin-top:4px;font-size:10px;color:#1971c2;text-decoration:none}.link-preview:hover{text-decoration:underline}
+    .modal{display:none;position:fixed;z-index:99;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.5)}.modal-content{background:white;margin:30px auto;padding:20px;width:88%;max-width:1000px;border-radius:12px;max-height:88vh;overflow:auto}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.setting-card{border:1px solid #ccc;border-radius:10px;padding:12px;background:#f8f9fa}.option-row{display:flex;gap:8px;margin:5px 0;align-items:center}.option-row span{flex:1;background:white;padding:6px;border-radius:6px;border:1px solid #ddd;font-size:11px}
+    .image-viewer{display:none;position:fixed;z-index:120;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.85);align-items:center;justify-content:center}.image-viewer img{max-width:92%;max-height:90%;border-radius:10px;background:white}.image-viewer span{position:absolute;right:25px;top:15px;color:white;font-size:34px;cursor:pointer}
+    .notes-page{display:none;padding:15px;background:#0f1117;min-height:100vh;color:#e9ecef}.notes-layout{display:grid;grid-template-columns:300px 1fr;gap:15px}.notes-sidebar{background:#15171c;color:#dbe4ff;border-radius:12px;padding:12px;min-height:80vh;border:1px solid #2b2f3a}.notes-sidebar h2{margin-top:0;color:white}.note-search{background:#232733!important;color:#fff!important;border:1px solid #343a40!important;margin-bottom:8px}.note-list-item{padding:9px;border-radius:8px;cursor:pointer;margin:5px 0;border:1px solid transparent;background:#1b1e27}.note-list-item:hover,.note-active{background:#2b2f3a;border-color:#5c7cfa}.note-date{display:block;color:#adb5bd;font-size:10px;margin-top:3px}.note-tag{display:inline-block;background:#364fc7;color:#dbe4ff;border-radius:999px;padding:2px 7px;font-size:10px;margin:2px 3px 0 0}.note-workspace{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note-editor{background:#1e1f25;color:#e9ecef;border-radius:12px;padding:14px;min-height:80vh;border:1px solid #343a40}.note-editor input{background:#2b2f3a;color:#fff;font-size:18px;font-weight:bold;margin-bottom:8px;border:1px solid #343a40}.note-editor textarea{background:#15171c;color:#e9ecef;border:1px solid #343a40;border-radius:8px;width:100%;height:430px;font-size:14px;line-height:1.6;padding:14px;font-family:Consolas,monospace}.markdown-help{color:#adb5bd;margin:8px 0}.note-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.note-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.note-toolbar button{padding:6px 8px;font-size:11px}.note-preview{background:#15171c;border:1px solid #343a40;border-radius:12px;padding:18px;min-height:80vh;line-height:1.7;overflow:auto}.note-preview h1,.note-preview h2,.note-preview h3{color:#fff;border-bottom:1px solid #343a40;padding-bottom:6px}.note-preview a{color:#74c0fc}.note-preview code{background:#2b2f3a;border-radius:4px;padding:2px 5px}.note-preview blockquote{border-left:4px solid #5c7cfa;margin-left:0;padding-left:12px;color:#ced4da}.note-preview ul{padding-left:22px}.note-preview img{max-width:100%;border-radius:10px;border:1px solid #343a40;margin:8px 0}.note-image-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}.note-img-card{background:#15171c;border:1px solid #343a40;border-radius:8px;padding:6px}.note-img-card img{width:100%;height:95px;object-fit:cover;border-radius:6px;cursor:pointer}.note-img-card input{font-size:10px;margin-top:4px}.note-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.obsidian-pill{background:#2b2f3a;color:#dbe4ff;border:1px solid #495057;border-radius:999px;padding:5px 9px;font-size:11px}
+    @media(max-width:1200px){.app{grid-template-columns:1fr}.summary-grid,.stat-box{grid-template-columns:repeat(2,1fr)}.settings-grid,.notes-layout{grid-template-columns:1fr}}
   </style>
 </head>
-
 <body>
-
-<div class="app">
-
+<div id="journalPage" class="app">
   <div>
-    <h1>📘 SMC Trading Journal Pro</h1>
-    <button class="btn-add" onclick="addTrade()">+ Add Trade</button>
-    <button class="btn-settings" onclick="openSettings()">⚙️ Manage Options</button>
-
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Asset</th>
-          <th>Day</th>
-          <th>Order</th>
-          <th>HTF</th>
-          <th>Session</th>
-          <th>Setup Model</th>
-          <th>POI</th>
-          <th>IDM</th>
-          <th>Entry TF</th>
-          <th>Fibo Max</th>
-          <th>Fibo Entry</th>
-          <th>Result</th>
-          <th>RR</th>
-          <th>Note</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="tradeBody"></tbody>
-    </table>
+    <h1>📘 SMC Trading Journal Pro <small>V1.2.2</small></h1>
+    <div class="topbar">
+      <button class="btn-add" onclick="addTrade()">+ Add Trade</button><button class="btn-blue" onclick="addTradeForCurrentMonth()">+ Add This Month</button><button id="undoBtn" class="btn-purple" onclick="undo()">↩ Undo</button><button id="redoBtn" class="btn-purple" onclick="redo()">↪ Redo</button><button class="btn-dark" onclick="openNotesPage()">📓 Trading Notes</button><button class="btn-dark" onclick="openSettings()">⚙️ Manage Options</button><button class="btn-dark" onclick="exportCSV()">Export CSV</button>
+    </div>
+    <div class="home"><h2>🏠 Home Summary</h2><div><select id="homeYear" onchange="render()"></select><select id="homeMonth" onchange="render()"></select></div><div class="summary-grid" id="homeSummary"></div><h3>📅 Monthly / Yearly Report</h3><div id="monthAccordion"></div></div>
+    <table><thead><tr><th>No</th><th>Date</th><th>Asset</th><th>Day</th><th>Order</th><th>HTF</th><th>Session</th><th>Setup Model</th><th>POI</th><th>Liquidity</th><th>IDM</th><th>Entry TF</th><th>Fibo Max</th><th>Fibo Entry</th><th>Result</th><th>RR</th><th>Mistake</th><th>Before</th><th>After</th><th>Note / Link</th><th>Delete</th></tr></thead><tbody id="tradeBody"></tbody></table>
   </div>
-
   <div>
-    <div class="filters">
-      <select id="filterAsset" onchange="render()"></select>
-      <select id="filterOrder" onchange="render()"></select>
-      <select id="filterResult" onchange="render()"></select>
-      <select id="filterSession" onchange="render()"></select>
-    </div>
-
-    <div class="stat-box">
-      <div>Total: <span id="totalTrades">0</span></div>
-      <div class="win">Winrate: <span id="winrate">0%</span></div>
-      <div>Avg RR: <span id="avgRR">0</span></div>
-    </div>
-
-    <div class="dashboard">
-      <div class="card">
-        <h3>HTF OB HOF/LOF</h3>
-        <canvas id="htfChart"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>Setup Model</h3>
-        <canvas id="setupChart"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>POI</h3>
-        <canvas id="poiChart"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>IDM</h3>
-        <canvas id="idmChart"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>Fibo</h3>
-        <canvas id="fiboChart"></canvas>
-      </div>
-
-      <div class="card">
-        <h3>Session</h3>
-        <canvas id="sessionChart"></canvas>
-      </div>
-
-      <div class="card wide">
-        <h3>Session & Day</h3>
-        <canvas id="dayChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<div class="modal" id="settingsModal">
-  <div class="modal-content">
-    <h2>⚙️ Manage Dropdown Options</h2>
-    <p>เพิ่มตัวเลือกเองได้ เช่น Setup Model ใหม่, POI ใหม่, HTF ใหม่ โดยไม่ต้องแก้โค้ด</p>
-
-    <div class="settings-grid" id="settingsGrid"></div>
-
-    <br>
-    <button class="btn-settings" onclick="closeSettings()">Close</button>
-    <button class="btn-delete" onclick="resetOptions()">Reset Options</button>
+    <div class="filters"><select id="filterAsset" onchange="render()"></select><select id="filterOrder" onchange="render()"></select><select id="filterResult" onchange="render()"></select><select id="filterSession" onchange="render()"></select></div>
+    <div class="stat-box"><div>Total<br><span id="totalTrades">0</span></div><div class="win">Winrate<br><span id="winrate">0%</span></div><div>Avg RR<br><span id="avgRR">0</span></div><div>Net R<br><span id="netR">0</span></div><div>Expectancy<br><span id="expectancy">0R</span></div></div>
+    <div class="dashboard"><div class="card"><h3>Setup Count</h3><canvas id="setupChart"></canvas></div><div class="card"><h3>Setup Winrate</h3><canvas id="setupWRChart"></canvas></div><div class="card"><h3>Session Winrate</h3><canvas id="sessionWRChart"></canvas></div><div class="card"><h3>Top Mistakes</h3><canvas id="mistakeChart"></canvas></div><div class="card"><h3>POI</h3><canvas id="poiChart"></canvas></div><div class="card"><h3>Liquidity</h3><canvas id="liquidityChart"></canvas></div><div class="card wide"><h3>Equity Curve (R)</h3><canvas id="equityChart"></canvas></div></div>
   </div>
 </div>
+<div id="notesPage" class="notes-page">
+  <div class="topbar">
+    <button class="btn-dark" onclick="openJournalPage()">← Back to Journal</button>
+    <button class="btn-add" onclick="createNote()">+ New Note</button>
+    <button class="btn-blue" onclick="generateDailyRecap()">Daily Recap</button>
+    <button class="btn-blue" onclick="generateWeeklyTemplate()">Weekly Template</button>
+    <button class="btn-blue" onclick="generateMonthlyRecap()">Monthly Recap</button>
+    <button class="btn-del" onclick="deleteCurrentNote()">Delete Note</button>
+  </div>
 
-<script>
-  const defaultOptions = {
-    asset: ["XAUUSD", "EURUSD", "US30", "BTCUSD", "NAS100"],
-    day: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-    order: ["Buy Limit", "Sell Limit", "Market Buy", "Market Sell"],
-    htf: ["Drop no-LOF", "Rally no-HOF", "Drop HOF", "Rally LOF"],
-    session: ["Asian", "London Open", "New York", "London Close"],
+  <div class="notes-layout">
+    <div class="notes-sidebar">
+      <h2>📓 Trading Notes</h2>
+      <input id="noteSearch" class="note-search" placeholder="ค้นหาโน้ต..." oninput="renderNotesListOnly()">
+      <p style="color:#adb5bd">Obsidian Style: Markdown + รูป + Preview + Template</p>
+      <div id="notesList"></div>
+    </div>
 
-    setup: [
-      "M2 + MSS + CHoCH + BOS + Supply + FVG",
-      "M2 + MSS + CHoCH + BOS + Hidden Supply",
-      "M3 + MSS + CHoCH + BOS + Supply + FVG",
-      "M3 + MSS + CHoCH + BOS + Hidden Supply",
-      "W2 + MSS + CHoCH + BOS + Demand + FVG",
-      "W2 + MSS + CHoCH + BOS + Hidden Demand",
-      "W3 + MSS + CHoCH + BOS + Demand + FVG",
-      "W3 + MSS + CHoCH + BOS + Hidden Demand",
-      "Liquidity Sweep + MSS + FVG",
-      "Liquidity Sweep + CHoCH + FVG",
-      "OB + IDM + MSS",
-      "OB + IDM + BOS",
-      "Supply Retest",
-      "Demand Retest",
-      "London Manipulation",
-      "New York Manipulation",
-      "AMD Accumulation",
-      "AMD Manipulation",
-      "AMD Distribution"
-    ],
-
-    poi: [
-      "OB + FVG",
-      "OB + Hidden",
-      "Supply",
-      "Demand",
-      "Hidden Supply",
-      "Hidden Demand",
-      "FVG",
-      "OB"
-    ],
-
-    idm: ["Yes", "No"],
-    entry: ["1m", "3m", "5m", "15m"],
-    fibo: ["3.222", "5", "6.918", "0.705"],
-    result: ["Win", "Loss", "BE"]
-  };
-
-  let options = JSON.parse(localStorage.getItem("journal_options")) || defaultOptions;
-  let trades = JSON.parse(localStorage.getItem("smc_trading_journal")) || [];
-  let charts = {};
-
-  function saveOptions() {
-    localStorage.setItem("journal_options", JSON.stringify(options));
-  }
-
-  function saveTrades() {
-    localStorage.setItem("smc_trading_journal", JSON.stringify(trades));
-  }
-
-  function addTrade() {
-    trades.push({
-      asset: options.asset[0],
-      day: options.day[0],
-      order: options.order[0],
-      htf: options.htf[0],
-      session: options.session[0],
-      setup: options.setup[0],
-      poi: options.poi[0],
-      idm: options.idm[0],
-      entry: options.entry[0],
-      fiboMax: options.fibo[0],
-      fiboEntry: options.fibo[0],
-      result: options.result[0],
-      rr: 2,
-      note: ""
-    });
-
-    saveTrades();
-    render();
-  }
-
-  function deleteTrade(index) {
-    trades.splice(index, 1);
-    saveTrades();
-    render();
-  }
-
-  function updateTrade(index, key, value) {
-    trades[index][key] = value;
-    saveTrades();
-    renderDashboard();
-  }
-
-  function makeSelect(value, list, index, key, extraClass = "") {
-    return `
-      <select class="${extraClass}" onchange="updateTrade(${index}, '${key}', this.value)">
-        ${list.map(item => `
-          <option value="${item}" ${item === value ? "selected" : ""}>${item}</option>
-        `).join("")}
-      </select>
-    `;
-  }
-
-  function renderTable() {
-    const body = document.getElementById("tradeBody");
-    body.innerHTML = "";
-
-    trades.forEach((t, i) => {
-      body.innerHTML += `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${makeSelect(t.asset, options.asset, i, "asset")}</td>
-          <td>${makeSelect(t.day, options.day, i, "day")}</td>
-          <td>${makeSelect(t.order, options.order, i, "order")}</td>
-          <td>${makeSelect(t.htf, options.htf, i, "htf")}</td>
-          <td>${makeSelect(t.session, options.session, i, "session")}</td>
-          <td>${makeSelect(t.setup, options.setup, i, "setup", "setup-select")}</td>
-          <td>${makeSelect(t.poi, options.poi, i, "poi")}</td>
-          <td>${makeSelect(t.idm, options.idm, i, "idm")}</td>
-          <td>${makeSelect(t.entry, options.entry, i, "entry")}</td>
-          <td>${makeSelect(t.fiboMax, options.fibo, i, "fiboMax")}</td>
-          <td>${makeSelect(t.fiboEntry, options.fibo, i, "fiboEntry")}</td>
-          <td>${makeSelect(t.result, options.result, i, "result")}</td>
-          <td>
-            <input type="number" value="${t.rr}" step="0.1"
-            onchange="updateTrade(${i}, 'rr', this.value)">
-          </td>
-          <td>
-            <input class="note-input" value="${t.note}" onchange="updateTrade(${i}, 'note', this.value)">
-          </td>
-          <td>
-            <button class="btn-delete" onclick="deleteTrade(${i})">X</button>
-          </td>
-        </tr>
-      `;
-    });
-  }
-
-  function renderFilters() {
-    makeFilter("filterAsset", "Asset All", options.asset);
-    makeFilter("filterOrder", "Order All", options.order);
-    makeFilter("filterResult", "Result All", options.result);
-    makeFilter("filterSession", "Session All", options.session);
-  }
-
-  function makeFilter(id, label, list) {
-    const el = document.getElementById(id);
-    const current = el.value || "All";
-
-    el.innerHTML = `<option value="All">${label}</option>`;
-
-    list.forEach(item => {
-      el.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-
-    el.value = current;
-  }
-
-  function getFilteredTrades() {
-    const asset = document.getElementById("filterAsset").value;
-    const order = document.getElementById("filterOrder").value;
-    const result = document.getElementById("filterResult").value;
-    const session = document.getElementById("filterSession").value;
-
-    return trades.filter(t =>
-      (asset === "All" || t.asset === asset) &&
-      (order === "All" || t.order === order) &&
-      (result === "All" || t.result === result) &&
-      (session === "All" || t.session === session)
-    );
-  }
-
-  function countBy(data, key) {
-    const count = {};
-
-    data.forEach(t => {
-      count[t[key]] = (count[t[key]] || 0) + 1;
-    });
-
-    return count;
-  }
-
-  function createChart(id, type, labels, data) {
-    if (charts[id]) {
-      charts[id].destroy();
-    }
-
-    charts[id] = new Chart(document.getElementById(id), {
-      type: type,
-      data: {
-        labels: labels,
-        datasets: [{
-          data: data
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: "right",
-            labels: {
-              font: { size: 10 }
-            }
-          }
-        },
-        scales: type === "bar" ? {
-          y: { beginAtZero: true }
-        } : {}
-      }
-    });
-  }
-
-  function drawByKey(chartId, type, data, key) {
-    const count = countBy(data, key);
-    createChart(chartId, type, Object.keys(count), Object.values(count));
-  }
-
-  function renderDashboard() {
-    const data = getFilteredTrades();
-
-    const total = data.length;
-    const wins = data.filter(t => t.result === "Win").length;
-
-    const winrate = total ? ((wins / total) * 100).toFixed(2) : 0;
-
-    const avgRR = total
-      ? (data.reduce((sum, t) => sum + Number(t.rr || 0), 0) / total).toFixed(2)
-      : 0;
-
-    document.getElementById("totalTrades").innerText = total;
-    document.getElementById("winrate").innerText = winrate + "%";
-    document.getElementById("avgRR").innerText = avgRR;
-
-    drawByKey("htfChart", "doughnut", data, "htf");
-    drawByKey("setupChart", "doughnut", data, "setup");
-    drawByKey("poiChart", "doughnut", data, "poi");
-    drawByKey("idmChart", "bar", data, "idm");
-    drawByKey("fiboChart", "doughnut", data, "fiboMax");
-    drawByKey("sessionChart", "doughnut", data, "session");
-    drawByKey("dayChart", "bar", data, "day");
-  }
-
-  function openSettings() {
-    document.getElementById("settingsModal").style.display = "block";
-    renderSettings();
-  }
-
-  function closeSettings() {
-    document.getElementById("settingsModal").style.display = "none";
-    render();
-  }
-
-  function renderSettings() {
-    const grid = document.getElementById("settingsGrid");
-    grid.innerHTML = "";
-
-    const labels = {
-      asset: "Asset",
-      day: "Day",
-      order: "Order Type",
-      htf: "HTF",
-      session: "Session",
-      setup: "Setup Model",
-      poi: "POI",
-      idm: "IDM",
-      entry: "Entry TF",
-      fibo: "Fibo",
-      result: "Result"
-    };
-
-    Object.keys(options).forEach(key => {
-      grid.innerHTML += `
-        <div class="setting-card">
-          <h3>${labels[key]}</h3>
-
-          <div class="option-row">
-            <input id="new_${key}" placeholder="เพิ่มตัวเลือกใหม่">
-            <button class="btn-add btn-small" onclick="addOption('${key}')">Add</button>
-          </div>
-
-          <div id="list_${key}">
-            ${options[key].map((item, index) => `
-              <div class="option-row">
-                <span>${item}</span>
-                <button class="btn-delete btn-small" onclick="deleteOption('${key}', ${index})">ลบ</button>
-              </div>
-            `).join("")}
-          </div>
+    <div class="note-workspace">
+      <div class="note-editor">
+        <div class="note-actions">
+          <button class="btn-add" onclick="saveCurrentNote()">Save</button>
+          <button class="btn-dark" onclick="copyCurrentNote()">Copy</button>
+          <button class="btn-purple" onclick="downloadCurrentNote()">Download .md</button>
         </div>
-      `;
-    });
+
+        <input id="noteTitle" placeholder="ชื่อโน้ต เช่น June 2026 Review" oninput="updateCurrentNoteTitle(this.value)">
+
+        <div class="note-meta-grid">
+          <input id="noteTags" placeholder="Tags เช่น #NY #W3 #Review" oninput="updateCurrentNoteTags(this.value)">
+          <input id="noteMood" placeholder="Mood เช่น Calm / FOMO / Discipline" oninput="updateCurrentNoteMood(this.value)">
+        </div>
+
+        <div class="note-toolbar">
+          <button class="btn-dark" onclick="insertMarkdown('# ')">H1</button>
+          <button class="btn-dark" onclick="insertMarkdown('## ')">H2</button>
+          <button class="btn-dark" onclick="insertMarkdown('- ')">Bullet</button>
+          <button class="btn-dark" onclick="insertMarkdown('> ')">Quote</button>
+          <button class="btn-dark" onclick="insertMarkdown('**bold**')">Bold</button>
+          <button class="btn-dark" onclick="insertMarkdown('- [ ] ')">Checklist</button>
+          <button class="btn-dark" onclick="insertMarkdown('\n---\n')">Divider</button>
+        </div>
+
+        <div class="markdown-help">เขียน Markdown ทางซ้าย แล้วดู Preview ทางขวา / เพิ่มรูปไว้ในโน้ตได้</div>
+        <textarea id="noteContent" placeholder="# Trading Recap&#10;&#10;## Market Context&#10;- ...&#10;&#10;## Screenshot Review&#10;- ...&#10;&#10;## Lesson Learned&#10;- ..." oninput="updateCurrentNoteContent(this.value)"></textarea>
+
+        <h3>🖼️ Note Images</h3>
+        <input type="file" accept="image/*" multiple onchange="addImagesToCurrentNote(this)">
+        <div id="noteImageGrid" class="note-image-grid"></div>
+      </div>
+
+      <div class="note-preview">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <span class="obsidian-pill">Preview</span>
+          <span class="obsidian-pill" id="previewTags"></span>
+          <span class="obsidian-pill" id="previewMood"></span>
+        </div>
+        <div id="notePreview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="image-viewer" id="imageViewer" onclick="closeImageViewer()"><span>&times;</span><img id="bigImage" src=""></div>
+<div class="modal" id="settingsModal"><div class="modal-content"><h2>⚙️ Manage Dropdown Options</h2><p>เพิ่มตัวเลือกเองได้ โดยไม่ต้องแก้โค้ด</p><div class="settings-grid" id="settingsGrid"></div><br><button class="btn-dark" onclick="closeSettings()">Close</button><button class="btn-del" onclick="resetOptions()">Reset Options</button></div></div>
+<script>
+const defaultOptions={asset:["XAUUSD","EURUSD","US30","BTCUSD","NAS100"],day:["Mon","Tue","Wed","Thu","Fri"],order:["Buy Limit","Sell Limit","Market Buy","Market Sell"],htf:["Drop no-LOF","Rally no-HOF","Drop HOF","Rally LOF"],session:["Asian","London Open","New York","London Close"],setup:["M2 + MSS + CHoCH + BOS + Supply + FVG","M2 + MSS + CHoCH + BOS + Hidden Supply","M3 + MSS + CHoCH + BOS + Supply + FVG","M3 + MSS + CHoCH + BOS + Hidden Supply","W2 + MSS + CHoCH + BOS + Demand + FVG","W2 + MSS + CHoCH + BOS + Hidden Demand","W3 + MSS + CHoCH + BOS + Demand + FVG","W3 + MSS + CHoCH + BOS + Hidden Demand","Liquidity Sweep + MSS + FVG","Liquidity Sweep + CHoCH + FVG","OB + IDM + MSS","OB + IDM + BOS"],poi:["OB + FVG","OB + Hidden","Supply","Demand","Hidden Supply","Hidden Demand","FVG","OB"],liquidity:["SSL","BSL","Both","None"],idm:["Yes","No"],entry:["1m","3m","5m","15m"],fibo:["3.222","5","6.918","0.705"],result:["Win","Loss","BE"],mistake:["None","FOMO","Revenge Trade","Early Entry","No MSS","No CHoCH","No BOS","HTF Against","Over Risk","Close Too Early"]};
+let options=JSON.parse(localStorage.getItem("journal_options_v12"))||defaultOptions;let trades=JSON.parse(localStorage.getItem("smc_trading_journal_v12"))||[];let notes=JSON.parse(localStorage.getItem("smc_trading_notes_v12"))||[];let currentNoteId=notes[0]?.id||null;let charts={};let undoStack=[];let redoStack=[];
+function today(){return new Date().toISOString().slice(0,10)}function ym(date){return (date||today()).slice(0,7)}function yearOf(date){return (date||today()).slice(0,4)}function monthOf(date){return (date||today()).slice(5,7)}function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}function deepCopy(x){return JSON.parse(JSON.stringify(x))}
+function snapshot(){undoStack.push(deepCopy({trades,options,notes,currentNoteId}));if(undoStack.length>50)undoStack.shift();redoStack=[];updateUndoRedoButtons()}function restoreState(state){trades=deepCopy(state.trades||[]);options=deepCopy(state.options||defaultOptions);notes=deepCopy(state.notes||[]);currentNoteId=state.currentNoteId||notes[0]?.id||null;saveAll();render();renderNotes()}function undo(){if(!undoStack.length)return;redoStack.push(deepCopy({trades,options,notes,currentNoteId}));restoreState(undoStack.pop());updateUndoRedoButtons()}function redo(){if(!redoStack.length)return;undoStack.push(deepCopy({trades,options,notes,currentNoteId}));restoreState(redoStack.pop());updateUndoRedoButtons()}function updateUndoRedoButtons(){if(undoBtn)undoBtn.classList.toggle("btn-disabled",!undoStack.length);if(redoBtn)redoBtn.classList.toggle("btn-disabled",!redoStack.length)}
+function saveOptions(){localStorage.setItem("journal_options_v12",JSON.stringify(options))}function saveTrades(){localStorage.setItem("smc_trading_journal_v12",JSON.stringify(trades))}function saveNotes(){localStorage.setItem("smc_trading_notes_v12",JSON.stringify(notes))}function saveAll(){saveOptions();saveTrades();saveNotes()}
+function addTrade(date=today()){snapshot();const d=new Date(date);const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];trades.push({date,asset:options.asset[0],day:days[d.getDay()]||options.day[0],order:options.order[0],htf:options.htf[0],session:options.session[0],setup:options.setup[0],poi:options.poi[0],liquidity:options.liquidity[0],idm:options.idm[0],entry:options.entry[0],fiboMax:options.fibo[0],fiboEntry:options.fibo[0],result:options.result[0],rr:2,mistake:"None",beforeImg:"",afterImg:"",note:""});saveTrades();render()}function addTradeForCurrentMonth(){const y=homeYear.value||new Date().getFullYear();const m=homeMonth.value&&homeMonth.value!=="All"?homeMonth.value:String(new Date().getMonth()+1).padStart(2,"0");addTrade(`${y}-${m}-01`)}function deleteTrade(i){snapshot();trades.splice(i,1);saveTrades();render()}function updateTrade(i,key,value){snapshot();trades[i][key]=value;saveTrades();render()}function updateImage(i,key,input){const file=input.files[0];if(!file)return;snapshot();const reader=new FileReader();reader.onload=e=>{trades[i][key]=e.target.result;saveTrades();render()};reader.readAsDataURL(file)}
+function openImageViewer(src){bigImage.src=src;imageViewer.style.display="flex"}function closeImageViewer(){imageViewer.style.display="none"}function isUrl(text){return /^https?:\/\//i.test((text||"").trim())}function openNoteLink(i){const link=(trades[i].note||"").trim();if(isUrl(link))window.open(link,"_blank");else alert("ช่อง Note นี้ยังไม่ใช่ลิงก์ ต้องขึ้นต้นด้วย http:// หรือ https://")}function rrClass(result){if(result==="Win")return"rr-win";if(result==="Loss")return"rr-loss";return"rr-be"}function displayR(t){if(t.result==="Win")return"+"+Number(t.rr||0)+"R";if(t.result==="Loss")return"-1R";return"0R"}
+function makeSelect(value,list,i,key,cls=""){return `<select class="${cls}" onchange="updateTrade(${i},'${key}',this.value)">${list.map(x=>`<option value="${x}" ${x===value?"selected":""}>${x}</option>`).join("")}</select>`}function renderTable(){tradeBody.innerHTML="";trades.forEach((t,i)=>{tradeBody.innerHTML+=`<tr><td>${i+1}</td><td><input type="date" value="${t.date||today()}" onchange="updateTrade(${i},'date',this.value)"></td><td>${makeSelect(t.asset,options.asset,i,"asset")}</td><td>${makeSelect(t.day,options.day,i,"day")}</td><td>${makeSelect(t.order,options.order,i,"order")}</td><td>${makeSelect(t.htf,options.htf,i,"htf")}</td><td>${makeSelect(t.session,options.session,i,"session")}</td><td>${makeSelect(t.setup,options.setup,i,"setup","setup-select")}</td><td>${makeSelect(t.poi,options.poi,i,"poi")}</td><td>${makeSelect(t.liquidity||"SSL",options.liquidity,i,"liquidity")}</td><td>${makeSelect(t.idm,options.idm,i,"idm")}</td><td>${makeSelect(t.entry,options.entry,i,"entry")}</td><td>${makeSelect(t.fiboMax,options.fibo,i,"fiboMax")}</td><td>${makeSelect(t.fiboEntry,options.fibo,i,"fiboEntry")}</td><td>${makeSelect(t.result,options.result,i,"result")}</td><td><input class="rr-input ${rrClass(t.result)}" type="number" step="0.1" value="${t.rr}" onchange="updateTrade(${i},'rr',this.value)"><div><b>${displayR(t)}</b></div></td><td>${makeSelect(t.mistake||"None",options.mistake,i,"mistake")}</td><td>${t.beforeImg?`<img class="img-thumb" src="${t.beforeImg}" onclick="openImageViewer('${t.beforeImg}')">`:""}<input type="file" accept="image/*" onchange="updateImage(${i},'beforeImg',this)"></td><td>${t.afterImg?`<img class="img-thumb" src="${t.afterImg}" onclick="openImageViewer('${t.afterImg}')">`:""}<input type="file" accept="image/*" onchange="updateImage(${i},'afterImg',this)"></td><td><textarea class="note-input" placeholder="เขียนโน้ต หรือวางลิงก์ https://..." onchange="updateTrade(${i},'note',this.value)">${t.note||""}</textarea>${isUrl(t.note)?`<a class="link-preview" href="${t.note}" target="_blank">เปิดลิงก์</a>`:`<button class="btn-blue btn-small" onclick="openNoteLink(${i})">Open Link</button>`}</td><td><button class="btn-del" onclick="deleteTrade(${i})">X</button></td></tr>`})}
+function makeFilter(id,label,list){const el=document.getElementById(id),cur=el.value||"All";el.innerHTML=`<option value="All">${label}</option>`+list.map(x=>`<option value="${x}">${x}</option>`).join("");el.value=[...list,"All"].includes(cur)?cur:"All"}function renderFilters(){makeFilter("filterAsset","Asset All",options.asset);makeFilter("filterOrder","Order All",options.order);makeFilter("filterResult","Result All",options.result);makeFilter("filterSession","Session All",options.session)}function filteredTrades(){const a=filterAsset.value,o=filterOrder.value,r=filterResult.value,s=filterSession.value;return trades.filter(t=>(a==="All"||t.asset===a)&&(o==="All"||t.order===o)&&(r==="All"||t.result===r)&&(s==="All"||t.session===s))}function resultR(t){const rr=Number(t.rr||0);if(t.result==="Win")return rr;if(t.result==="Loss")return -1;return 0}function stats(data){const total=data.length,wins=data.filter(t=>t.result==="Win").length,losses=data.filter(t=>t.result==="Loss").length,net=data.reduce((s,t)=>s+resultR(t),0),avgRR=total?data.reduce((s,t)=>s+Number(t.rr||0),0)/total:0;return{total,wins,losses,winrate:total?wins/total*100:0,avgRR,net,expectancy:total?net/total:0}}
+function countBy(data,key){const c={};data.forEach(t=>{const v=t[key]||"None";c[v]=(c[v]||0)+1});return c}function winrateBy(data,key){const groups={};data.forEach(t=>{const v=t[key]||"None";if(!groups[v])groups[v]=[];groups[v].push(t)});const labels=Object.keys(groups);return{labels,data:labels.map(l=>stats(groups[l]).winrate.toFixed(2))}}function chart(id,type,labels,data){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),{type,data:{labels,datasets:[{data}]},options:{responsive:true,plugins:{legend:{position:"right",labels:{font:{size:10}}}},scales:type==="bar"||type==="line"?{y:{beginAtZero:true}}:{}}})}function renderDashboard(){const data=filteredTrades(),st=stats(data);totalTrades.innerText=st.total;winrate.innerText=st.winrate.toFixed(2)+"%";avgRR.innerText=st.avgRR.toFixed(2);netR.innerText=st.net.toFixed(2)+"R";expectancy.innerText=st.expectancy.toFixed(2)+"R";let setup=countBy(data,"setup");chart("setupChart","doughnut",Object.keys(setup),Object.values(setup));let swr=winrateBy(data,"setup");chart("setupWRChart","bar",swr.labels,swr.data);let sess=winrateBy(data,"session");chart("sessionWRChart","bar",sess.labels,sess.data);let mistakes=countBy(data.filter(t=>(t.mistake||"None")!=="None"),"mistake");chart("mistakeChart","bar",Object.keys(mistakes),Object.values(mistakes));let poi=countBy(data,"poi");chart("poiChart","doughnut",Object.keys(poi),Object.values(poi));let liq=countBy(data,"liquidity");chart("liquidityChart","doughnut",Object.keys(liq),Object.values(liq));let equity=0,eq=data.map((t,i)=>{equity+=resultR(t);return equity.toFixed(2)});chart("equityChart","line",data.map((_,i)=>"#"+(i+1)),eq)}
+function bestByWinrate(data,key){const wr=winrateBy(data,key);if(!wr.labels.length)return"-";let max=-1,name="-";wr.labels.forEach((l,i)=>{if(Number(wr.data[i])>max){max=Number(wr.data[i]);name=l}});return name}function topCount(data,key){const c=countBy(data,key);let max=0,name="-";Object.keys(c).forEach(k=>{if(c[k]>max){max=c[k];name=k}});return name}function renderHome(){const years=[...new Set(trades.map(t=>yearOf(t.date)))],nowY=String(new Date().getFullYear());if(!years.includes(nowY))years.push(nowY);homeYear.innerHTML=years.sort().map(y=>`<option value="${y}">${y}</option>`).join("");if(!homeYear.value)homeYear.value=nowY;homeMonth.innerHTML=`<option value="All">ทั้งปี</option>`+Array.from({length:12},(_,i)=>String(i+1).padStart(2,"0")).map(m=>`<option value="${m}">${m}</option>`).join("");const y=homeYear.value,m=homeMonth.value,data=trades.filter(t=>yearOf(t.date)===y&&(m==="All"||monthOf(t.date)===m)),st=stats(data),bestSetup=bestByWinrate(data,"setup"),bestSession=bestByWinrate(data,"session"),worstMistake=topCount(data.filter(t=>(t.mistake||"None")!=="None"),"mistake");homeSummary.innerHTML=`<div class="metric">Trades<b>${st.total}</b></div><div class="metric">Winrate<b>${st.winrate.toFixed(1)}%</b></div><div class="metric">Net R<b>${st.net.toFixed(2)}R</b></div><div class="metric">Expectancy<b>${st.expectancy.toFixed(2)}R</b></div><div class="metric">Avg RR<b>${st.avgRR.toFixed(2)}</b></div><div class="metric">Best Setup<b style="font-size:11px">${bestSetup}</b></div><div class="metric">Best Session<b style="font-size:11px">${bestSession}</b></div><div class="metric">Worst Mistake<b style="font-size:11px">${worstMistake}</b></div>`;renderMonthAccordion(y)}function renderMonthAccordion(y){let html="";for(let mi=1;mi<=12;mi++){const m=String(mi).padStart(2,"0"),data=trades.filter(t=>yearOf(t.date)===y&&monthOf(t.date)===m),st=stats(data);html+=`<details><summary>${y}-${m} | ${st.total} trades | WR ${st.winrate.toFixed(1)}% | Net ${st.net.toFixed(2)}R <button class="btn-add btn-small" onclick="event.preventDefault();addTrade('${y}-${m}-01')">+ Add</button></summary><div style="margin-top:8px">${data.length?data.map((t,i)=>`<div>Trade ${i+1}: ${t.date} | ${t.asset} | ${t.setup} | ${t.result} | ${resultR(t)}R</div>`).join(""):"ยังไม่มีรายการเดือนนี้"}</div></details>`}monthAccordion.innerHTML=html}
+function openSettings(){settingsModal.style.display="block";renderSettings()}function closeSettings(){settingsModal.style.display="none";render()}function renderSettings(){const labels={asset:"Asset",day:"Day",order:"Order Type",htf:"HTF",session:"Session",setup:"Setup Model",poi:"POI",liquidity:"Liquidity",idm:"IDM",entry:"Entry TF",fibo:"Fibo",result:"Result",mistake:"Mistake"};settingsGrid.innerHTML=Object.keys(options).map(key=>`<div class="setting-card"><h3>${labels[key]}</h3><div class="option-row"><input id="new_${key}" placeholder="เพิ่มตัวเลือกใหม่"><button class="btn-add btn-small" onclick="addOption('${key}')">Add</button></div>${options[key].map((item,i)=>`<div class="option-row"><span>${item}</span><button class="btn-del btn-small" onclick="deleteOption('${key}',${i})">ลบ</button></div>`).join("")}</div>`).join("")}function addOption(key){const input=document.getElementById("new_"+key),v=input.value.trim();if(!v)return;snapshot();if(!options[key].includes(v))options[key].push(v);saveOptions();input.value="";renderSettings();render()}function deleteOption(key,i){if(options[key].length<=1){alert("ต้องเหลืออย่างน้อย 1 ตัวเลือก");return}snapshot();options[key].splice(i,1);saveOptions();renderSettings();render()}function resetOptions(){if(confirm("Reset ตัวเลือกทั้งหมด?")){snapshot();options=JSON.parse(JSON.stringify(defaultOptions));saveOptions();renderSettings();render()}}
+function openNotesPage(){journalPage.style.display="none";notesPage.style.display="block";renderNotes()}
+function openJournalPage(){notesPage.style.display="none";journalPage.style.display="grid";render()}
+
+function noteTemplate(){
+  return `# New Trading Note
+
+## Market Context
+- Trend:
+- HTF Bias:
+- Session:
+- Liquidity:
+
+## Trade Idea
+- Setup:
+- POI:
+- Entry Model:
+- Risk:
+
+## Screenshot Review
+- Before:
+- After:
+
+## Lesson Learned
+- 
+
+## Next Action
+- `;
+}
+
+function createNote(title="Untitled Note",content=noteTemplate()){
+  snapshot();
+  const note={
+    id:uid(),
+    title,
+    content,
+    tags:"",
+    mood:"",
+    images:[],
+    createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  notes.unshift(note);
+  currentNoteId=note.id;
+  saveNotes();
+  renderNotes();
+}
+
+function normalizeNote(n){
+  if(!n.images)n.images=[];
+  if(!n.tags)n.tags="";
+  if(!n.mood)n.mood="";
+  if(!n.updatedAt)n.updatedAt=n.createdAt||new Date().toISOString();
+  return n;
+}
+
+function getCurrentNote(){
+  notes.forEach(normalizeNote);
+  return notes.find(n=>n.id===currentNoteId)||notes[0]||null;
+}
+
+function renderNotes(){
+  if(!notesList)return;
+  notes.forEach(normalizeNote);
+  if(!notes.length){
+    createNote("Welcome Note",`# Trading Notes
+
+หน้านี้ใช้เป็นสมุดโน้ตเทรดแบบ Obsidian
+
+## ใช้ทำอะไรได้บ้าง
+- เขียน Daily Recap
+- เขียน Weekly Review
+- ใส่รูป Before / After
+- สรุป Mistake
+- วางลิงก์ TradingView / Screenshot
+- ใช้ Markdown เช่น #, ##, -, **bold**, Checklist
+
+## ตัวอย่าง Checklist
+- [ ] รอ MSS
+- [ ] รอ BOS
+- [ ] ไม่ Revenge Trade`);
+    return;
   }
 
-  function addOption(key) {
-    const input = document.getElementById("new_" + key);
-    const value = input.value.trim();
+  renderNotesListOnly();
 
-    if (!value) return;
+  const n=getCurrentNote();
+  noteTitle.value=n?n.title:"";
+  noteTags.value=n?n.tags:"";
+  noteMood.value=n?n.mood:"";
+  noteContent.value=n?n.content:"";
+  renderNoteImages();
+  renderNotePreview();
+}
 
-    if (!options[key].includes(value)) {
-      options[key].push(value);
-      saveOptions();
-      renderSettings();
-      render();
-    }
+function renderNotesListOnly(){
+  const q=(document.getElementById("noteSearch")?.value||"").toLowerCase();
+  const filtered=notes.map(normalizeNote).filter(n=>
+    n.title.toLowerCase().includes(q) ||
+    n.content.toLowerCase().includes(q) ||
+    (n.tags||"").toLowerCase().includes(q)
+  );
 
-    input.value = "";
+  notesList.innerHTML=filtered.map(n=>`
+    <div class="note-list-item ${n.id===currentNoteId?"note-active":""}" onclick="selectNote('${n.id}')">
+      📄 ${escapeHTML(n.title)}
+      <span class="note-date">${new Date(n.updatedAt||n.createdAt).toLocaleString()}</span>
+      ${(n.tags||"").split(" ").filter(Boolean).slice(0,4).map(t=>`<span class="note-tag">${escapeHTML(t)}</span>`).join("")}
+    </div>
+  `).join("");
+}
+
+function selectNote(id){
+  currentNoteId=id;
+  saveNotes();
+  renderNotes();
+}
+
+function touchNote(n){
+  n.updatedAt=new Date().toISOString();
+}
+
+function updateCurrentNoteTitle(v){
+  const n=getCurrentNote(); if(!n)return;
+  n.title=v; touchNote(n); saveNotes(); renderNotesListOnly(); renderNotePreview();
+}
+
+function updateCurrentNoteTags(v){
+  const n=getCurrentNote(); if(!n)return;
+  n.tags=v; touchNote(n); saveNotes(); renderNotesListOnly(); renderNotePreview();
+}
+
+function updateCurrentNoteMood(v){
+  const n=getCurrentNote(); if(!n)return;
+  n.mood=v; touchNote(n); saveNotes(); renderNotePreview();
+}
+
+function updateCurrentNoteContent(v){
+  const n=getCurrentNote(); if(!n)return;
+  n.content=v; touchNote(n); saveNotes(); renderNotePreview();
+}
+
+function saveCurrentNote(){saveNotes();alert("Saved")}
+
+function copyCurrentNote(){
+  const n=getCurrentNote(); if(!n)return;
+  navigator.clipboard.writeText(`# ${n.title}\n\nTags: ${n.tags||"-"}\nMood: ${n.mood||"-"}\n\n${n.content}`);
+  alert("Copied");
+}
+
+function downloadCurrentNote(){
+  const n=getCurrentNote(); if(!n)return;
+  const md=`# ${n.title}\n\nTags: ${n.tags||"-"}\nMood: ${n.mood||"-"}\n\n${n.content}`;
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"}));
+  a.download=(n.title||"trading-note").replace(/[\\/:*?"<>|]/g,"_")+".md";
+  a.click();
+}
+
+function deleteCurrentNote(){
+  if(!currentNoteId)return;
+  if(!confirm("ลบโน้ตนี้ใช่ไหม?"))return;
+  snapshot();
+  notes=notes.filter(n=>n.id!==currentNoteId);
+  currentNoteId=notes[0]?.id||null;
+  saveNotes();
+  renderNotes();
+}
+
+function insertMarkdown(text){
+  const area=document.getElementById("noteContent");
+  const start=area.selectionStart;
+  const end=area.selectionEnd;
+  const before=area.value.slice(0,start);
+  const after=area.value.slice(end);
+  area.value=before+text+after;
+  area.focus();
+  area.selectionStart=area.selectionEnd=start+text.length;
+  updateCurrentNoteContent(area.value);
+}
+
+function addImagesToCurrentNote(input){
+  const files=[...input.files];
+  if(!files.length)return;
+  const n=getCurrentNote(); if(!n)return;
+  snapshot();
+
+  let loaded=0;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      n.images.push({
+        id:uid(),
+        name:file.name,
+        src:e.target.result,
+        caption:""
+      });
+      loaded++;
+      if(loaded===files.length){
+        touchNote(n);
+        saveNotes();
+        renderNotes();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value="";
+}
+
+function updateNoteImageCaption(imgId,value){
+  const n=getCurrentNote(); if(!n)return;
+  const img=n.images.find(x=>x.id===imgId); if(!img)return;
+  img.caption=value;
+  touchNote(n);
+  saveNotes();
+  renderNotePreview();
+}
+
+function deleteNoteImage(imgId){
+  const n=getCurrentNote(); if(!n)return;
+  snapshot();
+  n.images=n.images.filter(x=>x.id!==imgId);
+  touchNote(n);
+  saveNotes();
+  renderNotes();
+}
+
+function insertImageMarkdown(imgId){
+  const n=getCurrentNote(); if(!n)return;
+  const img=n.images.find(x=>x.id===imgId); if(!img)return;
+  insertMarkdown(`\n![${img.caption||img.name}](note-image:${img.id})\n`);
+}
+
+function renderNoteImages(){
+  const n=getCurrentNote();
+  if(!n){noteImageGrid.innerHTML="";return;}
+  n.images=n.images||[];
+  noteImageGrid.innerHTML=n.images.map(img=>`
+    <div class="note-img-card">
+      <img src="${img.src}" onclick="openImageViewer('${img.src}')">
+      <input value="${escapeAttr(img.caption||"")}" placeholder="Caption" oninput="updateNoteImageCaption('${img.id}',this.value)">
+      <div style="display:flex;gap:4px;margin-top:5px">
+        <button class="btn-blue btn-small" onclick="insertImageMarkdown('${img.id}')">Insert</button>
+        <button class="btn-del btn-small" onclick="deleteNoteImage('${img.id}')">ลบ</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function escapeHTML(str){
+  return String(str||"").replace(/[&<>"']/g,function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m];
+  });
+}
+
+function escapeAttr(str){
+  return String(str||"").replace(/"/g,"&quot;");
+}
+
+function markdownToHtml(md,note){
+  let text=escapeHTML(md||"");
+
+  text=text.replace(/!\[(.*?)\]\(note-image:(.*?)\)/g,(m,alt,id)=>{
+    const img=(note.images||[]).find(x=>x.id===id);
+    return img?`<img src="${img.src}" alt="${escapeAttr(alt)}"><div style="color:#adb5bd;font-size:12px">${escapeHTML(img.caption||alt||img.name)}</div>`:m;
+  });
+
+  text=text.replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
+  text=text.replace(/`([^`]+)`/g,"<code>$1</code>");
+  text=text.replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g,'<a href="$2" target="_blank">$1</a>');
+
+  const lines=text.split("\n");
+  let html="";
+  return lines.map(line=>{
+    if(line.startsWith("# "))return `<h1>${line.slice(2)}</h1>`;
+    if(line.startsWith("## "))return `<h2>${line.slice(3)}</h2>`;
+    if(line.startsWith("### "))return `<h3>${line.slice(4)}</h3>`;
+    if(line.startsWith("> "))return `<blockquote>${line.slice(2)}</blockquote>`;
+    if(line.startsWith("---"))return `<hr>`;
+    if(line.startsWith("- [ ] "))return `<div>☐ ${line.slice(6)}</div>`;
+    if(line.startsWith("- [x] ")||line.startsWith("- [X] "))return `<div>☑ ${line.slice(6)}</div>`;
+    if(line.startsWith("- "))return `<li>${line.slice(2)}</li>`;
+    if(line.trim()==="")return `<br>`;
+    return `<p>${line}</p>`;
+  }).join("");
+}
+
+function renderNotePreview(){
+  const n=getCurrentNote();
+  if(!n||!document.getElementById("notePreview"))return;
+  previewTags.innerText=n.tags?`Tags: ${n.tags}`:"No Tags";
+  previewMood.innerText=n.mood?`Mood: ${n.mood}`:"No Mood";
+  notePreview.innerHTML=markdownToHtml(n.content,n);
+
+  if((n.images||[]).length){
+    notePreview.innerHTML+=`<h2>Image Gallery</h2>`+(n.images||[]).map(img=>`
+      <img src="${img.src}" onclick="openImageViewer('${img.src}')">
+      <div style="color:#adb5bd;font-size:12px;margin-bottom:10px">${escapeHTML(img.caption||img.name)}</div>
+    `).join("");
   }
+}
 
-  function deleteOption(key, index) {
-    if (options[key].length <= 1) {
-      alert("ต้องเหลืออย่างน้อย 1 ตัวเลือก");
-      return;
-    }
+function recapText(data,title){
+  const st=stats(data),bestSetup=bestByWinrate(data,"setup"),bestSession=bestByWinrate(data,"session"),worstMistake=topCount(data.filter(t=>(t.mistake||"None")!=="None"),"mistake"),lines=data.map((t,i)=>`- Trade ${i+1}: ${t.asset} | ${t.session} | ${t.setup} | ${t.result} | ${resultR(t)}R | Mistake: ${t.mistake||"None"}`).join("\\n");
+  return `# ${title}
 
-    options[key].splice(index, 1);
-    saveOptions();
-    renderSettings();
-    render();
-  }
+## Performance
+- Total Trades: ${st.total}
+- Winrate: ${st.winrate.toFixed(2)}%
+- Net R: ${st.net.toFixed(2)}R
+- Expectancy: ${st.expectancy.toFixed(2)}R
+- Average RR: ${st.avgRR.toFixed(2)}
 
-  function resetOptions() {
-    if (confirm("ต้องการ Reset ตัวเลือกทั้งหมดกลับค่าเริ่มต้นใช่ไหม?")) {
-      options = JSON.parse(JSON.stringify(defaultOptions));
-      saveOptions();
-      renderSettings();
-      render();
-    }
-  }
+## Best / Worst
+- Best Setup: ${bestSetup}
+- Best Session: ${bestSession}
+- Worst Mistake: ${worstMistake}
 
-  function render() {
-    renderFilters();
-    renderTable();
-    renderDashboard();
-  }
+## Trade List
+${lines||"- No trades"}
 
-  render();
+## Screenshot Review
+- เพิ่มรูป Before / After ใน Note Images แล้วกด Insert
+
+## สิ่งที่ทำได้ดี
+- 
+
+## สิ่งที่ต้องแก้
+- 
+
+## แผนรอบถัดไป
+- `;
+}
+
+function generateDailyRecap(){
+  const date=prompt("ใส่วันที่ที่ต้องการ Recap เช่น 2026-06-06",today());
+  if(!date)return;
+  const data=trades.filter(t=>t.date===date);
+  createNote(`Daily Recap ${date}`,recapText(data,`Daily Recap ${date}`));
+  const n=getCurrentNote(); if(n){n.tags="#Daily #Recap";n.mood="Review";saveNotes();renderNotes();}
+}
+
+function generateWeeklyTemplate(){
+  const title=prompt("ชื่อ Weekly Review เช่น Week 1 June 2026","Weekly Review");
+  if(!title)return;
+  createNote(title,`# ${title}
+
+## Weekly Performance
+- Total Trades:
+- Winrate:
+- Net R:
+- Best Setup:
+- Worst Mistake:
+
+## What Worked
+- 
+
+## What Failed
+- 
+
+## Screenshot Gallery
+- เพิ่มรูปใน Note Images แล้วกด Insert
+
+## Rules For Next Week
+- [ ] รอ MSS
+- [ ] รอ BOS
+- [ ] ไม่ Revenge Trade
+- [ ] จำกัดจำนวนไม้ต่อวัน
+
+## Final Lesson
+- `);
+  const n=getCurrentNote(); if(n){n.tags="#Weekly #Review";n.mood="Planning";saveNotes();renderNotes();}
+}
+
+function generateMonthlyRecap(){
+  const month=prompt("ใส่เดือนที่ต้องการ Recap เช่น 2026-06",ym(today()));
+  if(!month)return;
+  const data=trades.filter(t=>ym(t.date)===month);
+  createNote(`Monthly Recap ${month}`,recapText(data,`Monthly Recap ${month}`));
+  const n=getCurrentNote(); if(n){n.tags="#Monthly #Recap";n.mood="Review";saveNotes();renderNotes();}
+}
+
+function exportCSV(){const rows=[["Date","Asset","Day","Order","HTF","Session","Setup","POI","Liquidity","IDM","EntryTF","FiboMax","FiboEntry","Result","RR","Mistake","Note"]];trades.forEach(t=>rows.push([t.date,t.asset,t.day,t.order,t.htf,t.session,t.setup,t.poi,t.liquidity,t.idm,t.entry,t.fiboMax,t.fiboEntry,t.result,t.rr,t.mistake,t.note]));const csv=rows.map(r=>r.map(x=>`"${String(x||"").replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="smc_trading_journal_v12.csv";a.click()}function render(){renderFilters();renderTable();renderHome();renderDashboard();updateUndoRedoButtons()}render();
 </script>
-
 </body>
 </html>
